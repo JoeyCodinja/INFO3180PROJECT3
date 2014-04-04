@@ -1,0 +1,243 @@
+/*Stylesheet for the Flip App*/
+
+body
+{
+  margin:0px;
+  padding:0px;
+}
+
+p
+{
+  text-align:center;
+}
+
+body
+{
+  background-color:#470A08;
+}
+
+#gamearea
+{
+  display:block;
+    margin-left:auto;
+    margin-right:auto;
+  padding:15px;
+  height:auto;
+  width: 750px;
+  border-radius: 10px;
+  box-shadow: 15px 5px 10px;
+  background:url('/static/images/9756060-vector-seamless-plaid-pattern-in-gray-with-red-stripe.jpg');
+}
+
+.flipArea
+{
+  display:inline-block;
+  position:relative;
+  height:172px;
+  width:124px;
+  margin: 12.5px;
+  perspective = 1000px;
+  /*Compatibility for Chrome*/
+  -webkit-perspective: 1000px;
+  /*Compatiblity for Mozilla*/
+  -moz-perspective: 1000px; 
+  
+}
+
+.card
+{
+  width:100%;
+  height:100%;
+ 
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+  /*Compatibility for Chrome*/
+  -webkit-transform-style: preserve-3d;
+  -webkit-transition: -webkit-transform 0.5s;
+  /*Compatibility for Mozilla*/
+  -moz-transform-style: preserve-3d;
+  -moz-transition: -moz-transform 0.5s;
+}
+
+.card div
+{
+  height:100%;
+  width:100%;
+  box-shadow: 15px 5px 15px;
+  border-radius:3px;
+  display:block;
+  position:absolute;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  -moz-backface-visibility:hidden;
+}
+
+
+.back
+{
+  background:white;
+  transform:rotateY(180deg);
+  -webkit-transform:rotateY(180deg);
+  -moz-transform:rotateY(180deg);
+}  
+
+.front
+{
+  background:url(/static/images/cardbacks.jpg);
+  background-position:45% 47%;
+  
+}
+
+.flipped
+{
+  transform:rotateY(180deg);  
+  -webkit-transform:rotateY(180deg);
+  -moz-transform:rotateY(180deg);
+}
+
+.flipped2  /*Differentiation between regular cards and matched cards */
+{
+  transform:rotateY(180deg);
+  -webkit-transform:rotateY(180deg);
+  -moz-transform:rotateY(180deg);
+}
+
+.blocker
+{
+  z-index:1000;
+  opacity:0.5;
+  background-color:black;
+  height:1200px;
+  width:850px;
+  
+  position:absolute;
+  top:0px;
+  right:0px;
+  left:0px;
+  bottom:0px;
+  margin:auto;
+}
+/*-------- Importing a new Font for counter --------*/
+@font-face
+{
+  font-family: Tower_Ruins;
+  src: url("/static/fonts/Tower_Ruins/towerruins.ttf");
+}
+/*--------          Import End              --------*/ 
+
+.gameDetails
+{
+  width:250px;
+  position:relative;
+    top:-520px;
+  font-family:Tower_Ruins, "Berlin Sans FB";
+  font-size: 50px;
+  text-align: 'center';
+  color: #1968AD;
+  float:left;
+  text-align:center;
+}
+
+#gameModeContainer
+{
+  width:120px;
+  height:190px;
+  background-color:blue;
+  opacity:0.7;
+  margin:auto;
+  
+  position:absolute;
+  top:0px;
+  bottom:0px;
+  right:0px;
+  left:0px;
+    
+}
+
+.playChoice
+{
+  border: 2px solid red;
+  
+  position:relative;
+    top:0px;
+    left:0px;
+    right:0px;
+    bottom:0px;
+  margin:auto;
+  margin-top:10px;
+  
+  
+  opacity:1;
+  width:100px;
+  height:75px;
+  background-color:white;
+}
+
+#saveBtn
+{
+  position:inherit;
+  display:table-cell;
+  top:20px;
+  width:200px;
+  height:75px; 
+  background-color:white;
+  text-align:center;
+  vertical-align:middle;
+}
+
+#resetBtn
+{
+  position:inherit;
+  top:30px;
+  width:200px;
+  height:75px; 
+  background-color:white;
+  text-align:center;
+  vertical-align:middle;
+}
+
+#PlayerHighlighter
+{
+  z-index=-10;
+  width:150px;
+  height:20px;
+  background-color:white;
+  border-radius:3px;
+  
+  position:relative;
+  float:right;
+  right:61px;
+  top:-520px;
+  
+}
+
+/*--------      Card Faces Configuration     --------*/
+
+.face
+{
+  background-image:url('/static/images/classic-playing-cards.png');
+  background-size:1651px 699px;
+}
+
+/*--------        Card Face Config End       --------*/
+/*N.B. DIFFERENCE BETWEEN CARDS IN THE SAME SUIT  127PX 
+       DIFFERENCE BETWEEN CARDS OF DIFFERENT SUITS -175PX */
+
+.face .spades
+{
+  background-position: 0px 0px;
+}
+.face .clubs 
+{
+  background-position: 0px -175px;
+}
+.face .hearts
+{
+  background-position: 0px -350px
+}
+.face .diamonds
+{
+  background-position: 0px -525px
+}
+
+

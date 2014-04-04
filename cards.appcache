@@ -1,0 +1,40 @@
+CACHE MANIFEST 
+
+
+CACHE:
+
+# html files 
+/
+/error-cache 
+
+# css files
+static/stylesheets/error.css
+
+# images 
+static/images/9756060-vector-seamless-plaid-pattern-in-gray-with-red-stripe.jpg
+static/images/cardbacks.jpg
+static/images/classic-playing-cards.png
+
+# audio
+static/audio/magic-chime-02.mp3
+static/audio/page-flip-02.mp3
+
+# scripts
+static/scripts/cards.js
+
+# misc
+static/fonts/Tower_Ruins/towerruins.ttf 
+
+
+FALLBACK:
+/ /error-cache
+
+NETWORK:
+*
+static/scripts/cardsproto.js 
+http://ajax.googleapis.com/ajax/libs/prototype/1.7.1.0/prototype.js
+static/stylesheets/style.css
+
+
+SETTINGS:
+prefer-online
