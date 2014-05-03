@@ -36,7 +36,7 @@ body
   height:172px;
   width:124px;
   margin: 12.5px;
-  perspective = 1000px;
+  perspective: 1000px;
   /*Compatibility for Chrome*/
   -webkit-perspective: 1000px;
   /*Compatiblity for Mozilla*/
@@ -127,9 +127,9 @@ body
 
 .gameDetails
 {
-  width:250px;
+  width:230px;
   position:relative;
-    top:-520px;
+    top:-700px;
   font-family:Tower_Ruins, "Berlin Sans FB";
   font-size: 50px;
   text-align: 'center';
@@ -196,19 +196,21 @@ body
   vertical-align:middle;
 }
 
+
 #PlayerHighlighter
 {
-  z-index=-10;
-  width:150px;
-  height:20px;
+  z-index:-10;
   background-color:white;
-  border-radius:3px;
+  opacity:0.2;
+  width:200px;
+  height:auto;
+  position:absolute;
+  top:350px;
+  left:1030px;
+  text-align:center;
   
-  position:relative;
-  float:right;
-  right:61px;
-  top:-520px;
-  
+  font-family:Tower_Ruins, "Berlin Sans FB";
+  font-size:35px;
 }
 
 /*--------      Card Faces Configuration     --------*/

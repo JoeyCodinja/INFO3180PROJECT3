@@ -19,10 +19,10 @@ def cache_error_pers():
   """Returns an error page if the cached page ahs any problems loading whatsoever"""
   return render_template('error.html')
   
-@app.route('/flip-test')
+@app.route('/test')
 def flipTest():
   """Returns a page that has the tester for the flip animation"""
-  return render_template('testflip.html');
+  return render_template('test.html');
 
 @app.errorhandler(404)
 def page_not_found(e):

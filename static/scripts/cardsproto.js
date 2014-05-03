@@ -1,5 +1,3 @@
-
-
 var suits = []; 
 var cardpack = [];
 var turns = 0;
@@ -12,26 +10,34 @@ document.observe('dom:loaded', function(){
   chooseGameMode();
 });
 
-
-
-function turnCounter()//Counts the amount of turns the player has
-                      //already expired during their game and stops 
-                      //the game when the amount of turns eq
+function turnCounter(player)//Counts the amount of turns the player has
+                            //already expired during their game and stops 
+                            //the game when the amount of turns eq
 {
-  if($$('.flipped').length==2)
+  
+  if (gameModeChoice ==1 && player == null)
+  {    
+    if($$('.flipped').length==2)
+    {
+      turns+=1;
+      if(turns==24)
+      {
+        var blocker = new Element('blocker',{'class': 'blocker'});
+        $$('body')[0].insert({bottom:blocker});
+      }
+      $('turns').innerHTML = turns;
+      console.log('Turns',turns,'completed');
+      if(gameLogic()!=-1)
+      {
+        flipCard($$('.flipped'));
+      }
+  }
+  else if (gameModeChoice ==2 && player!= null)
   {
-    turns+=1;
-    if(turns==24)
-    {
-      var blocker = new Element('blocker',{'class': 'blocker'});
-      $$('body')[0].insert({bottom:blocker});
-    }
-    $('turns').innerHTML = turns;
-    console.log('Turns',turns,'completed');
-    if(gameLogic()!=-1)
-    {
-      flipCard($$('.flipped'));
-    }
+    //Check the Player Turn
+    //Update the turns accordingly 
+  }
+   
   }
 }
 
@@ -272,7 +278,9 @@ function gameLogic() /*Contains the code that manages
 {
   var c2bc = $$('.flipped');    //Cards to be checked(Same)
   var cardsMatched = $$('flipped2');
-    if(c2bc[1].childElements()[1].style.backgroundPosition == c2bc[0].childElements()[1].style.backgroundPosition)
+  if(gameModeChoice==1)
+  {
+    if(c2bc[1].childElements()[0].style.backgroundPosition == c2bc[0].childElements()[0].style.backgroundPosition)
       {
         if(c2bc[1].className.indexOf('matched') == -1)
           {
@@ -288,6 +296,11 @@ function gameLogic() /*Contains the code that manages
             c2bc[0].className = c2bc[0].className.replace(' flipped', ' flipped2');
           }
       }
+  }
+  else if (gameModeChoice==2)
+  {
+    //
+  }
 }
   
 
@@ -318,7 +331,10 @@ function flipCard(cards)
     $('flipAudio').load();
     $('flipAudio').play();
   }
-  turnCounter();
+  if (gameModeChoice ==1)
+  {
+    turnCounter();
+  }
 }
 
 function resumeGame() /*Resumes the game from the state that it was 
@@ -329,33 +345,48 @@ function resumeGame() /*Resumes the game from the state that it was
   //Checks if there are localStorage keys to get gamedata from 
   if($.jStorage.index()!= 0)
   {
-    gameState.push($.jStorage.get('gameCards',"Key retrieve Error"));
-    gameState[0] = JSON.parse(gameState[0]);
-    currentCards = $$('.card'); //Get the cards current game that is loaded
-    for(var i=0;i<=currentCards.length-1;i++)
+    if($.jStorage.get('gameCards',"Key retrieve Error")!="Key retrieve Error")
     {
-      if(gameState[0][i].indexOf('C')>-1)
-        {
-          currentCards[i].className += ' clubs';
-        }
-      if(gameState[0][i].indexOf('D')>-1)
-        {
-          currentCards[i].className += ' diamonds';
-        }
-      if(gameState[0][i].indexOf('H')>-1)
-        {
-          currentCards[i].className += ' hearts';
-        }
-      if(gameState[0][i].indexOf('S')>-1)
-        {
-          currentCards[i].className += ' spades';
-        }
-      suitSelect(gameState[0][i], i);
-   }
-   if($.jStorage.index().indexOf('matchedCardsPos')>-1)
+      gameState.push($.jStorage.get('gameCards',"Key retrieve Error"));
+      gameState[0] = JSON.parse(gameState[0]);
+      currentCards = $$('.card'); //Get the cards current game that is loaded
+      for(var i=0;i<=currentCards.length-1;i++)
+      {
+        if(gameState[0][i].indexOf('C')>-1)
+          {
+            currentCards[i].className += ' clubs';
+          }
+        if(gameState[0][i].indexOf('D')>-1)
+          {
+            currentCards[i].className += ' diamonds';
+          }
+        if(gameState[0][i].indexOf('H')>-1)
+          {
+            currentCards[i].className += ' hearts';
+          }
+        if(gameState[0][i].indexOf('S')>-1)
+          {
+            currentCards[i].className += ' spades';
+          }
+        suitSelect(gameState[0][i], i);
+      }
+    }
+    else
+    {
+      console.log("Game State Retrieve Error (1)");
+      $.jStorage.flush(); //Flush the Applicaton Storage of our error 
+      return 1; // Error resuming game state so new game is started.
+    }
+    
+    if($.jStorage.index().indexOf('matchedCardsPos')>-1)
      {
-       gameState.push($.jStorage.get('matchedCardsPos', 'Key retrieve Error'));
-       gameState[1] = JSON.parse(gameState[1]);
+       if($.jStorage.get('matchedCardsPos', 'Key retrieve Error'))
+       {
+         gameState.push($.jStorage.get('matchedCardsPos', 'Key retrieve Error'));
+         gameState[1] = JSON.parse(gameState[1]);
+       }
+       
+       
      }
    for(var i=0;i<=gameState[1].length-1;i++)
      {
@@ -385,7 +416,7 @@ function acceptName(names)/*Accepts and binds the name that has been
  if(names == undefined || names == null || typeof names == undefined)
  {
    var p_n_s =$('playerName').childElements();
-   var name = $$('input')[0].value;
+   var name = $$('input')[0].value + "<br><br>";
    p_n_s[2].remove();
    $$('form')[0].replace(name);
    $.jStorage.set('playerName', name);
@@ -393,7 +424,21 @@ function acceptName(names)/*Accepts and binds the name that has been
  }
  else
  {
-   return names
+   if(gameModeChoice == 2)//Verifying that we are in 2 Player Mode
+   {
+     var name = new Array();
+     name.push($$('input')[0].value);
+     name.push($$('input')[1].value);
+     $$('form')[0].remove()
+     $.jStorage.set('player1Name', name[0]);
+     $.jStorage.set('player2Name', name[1]);
+     name[0] = "Player 1<br>" + name[0] + "<br>";
+     name[1] = "Player 2<br>" + name[1] + "<br>";
+     $("PlayerHighlighter").insert({top:name[0]});
+     $("PlayerHighlighter").insert({bottom:"<br><br>"});
+     $("PlayerHighlighter").insert({bottom:name[1]});
+     return false;
+   }  
  }
   
 }
@@ -506,9 +551,21 @@ function gameStart()
       gameDetails.insert({top:playerName, bottom:savebtn});
       gameDetails.insert({bottom:resetbtn});
       body.insert({bottom:gameDetails});
+      $('saveBtn').onclick = function(){var btn =$('saveBtn');
+                                    btn.style.backgroundColor = 'black';
+                                    window.setTimeout(function(){$('saveBtn').style.backgroundColor ='white'}, 200);
+                                    saveGame();
+                                   }
+      $('resetBtn').onclick = function(){var btn = $('resetBtn');
+                                    btn.style.backgroundColor ='black';
+                                    window.setTimeout(function(){$('resetBtn').style.backgroundColor ='white'}, 200);
+                                    $.jStorage.flush();
+                                    alert('Saved Game Data Erased');
+                                    console.log('LocalStorage flushed');
+                                    }
     }
     
-    if($.jStorage.index().length != 0 || resumeGame() != 1)
+  if($.jStorage.index().length != 0 || resumeGame() != 1)
   {
     if(resumeGame() === 2)
     {
@@ -524,34 +581,33 @@ function gameStart()
       {
         cards[i].onclick = flipCard;
       }
-  $('saveBtn').onclick = function(){var btn =$('saveBtn');
-                                    btn.style.backgroundColor = 'black';
-                                    window.setTimeout(function(){$('saveBtn').style.backgroundColor ='white'}, 200);
-                                    saveGame();
-                                   }
-  $('resetBtn').onclick = function(){var btn = $('resetBtn');
-                                    btn.style.backgroundColor ='black';
-                                    window.setTimeout(function(){$('resetBtn').style.backgroundColor ='white'}, 200);
-                                    $.jStorage.flush();
-                                    alert('Saved Game Data Erased');
-                                    console.log('LocalStorage flushed');
-                                    }
   if (gameModeChoice == 2)  
   {
     //Player names shown on the right hand side 
     //Highlighter for current player turn 
+    var Player1 = new Player();
+    var Player2 = new Player();
     var Player1Name = new Element('input',{'id':'player1Name'});
     var Player1Label = new Element('label',{'id':'player1'});
+      Player1Label.innerHTML = 'Player 1';
     var Player2Name = new Element('input',{'id':'player2Name'}); 
     var Player2Label = new Element('label',{'id':'player2'});
-    var PlayerHighlighter = new Element('div',{'id':'PlayerHighlighter',});
+      Player2Label.innerHTML = 'Player 2';
+    var PlayerHighlighter = new Element('div',{'id':'PlayerHighlighter'});
     var toastbox = new Element('div',{'id':'PlayerNameEntry'});
-    var inputNames = new Element('form',{'id':'inputNames', 'onsubmit':'acceptNames(this)'});
+    var inputNames = new Element('form',{'id':'inputNames', 'onsubmit':'return acceptName(this)'});
+    var submitNames = new Element('button',{'type':'submit'});
+      submitNames.innerHTML = 'Set';
+    inputNames.insert({bottom:Player1Label});
+    Player1Label.insert({before:'<br><br>'});
+    inputNames.insert({bottom:Player1Name});
+    inputNames.insert({bottom:submitNames});
     inputNames.insert({bottom:Player2Label});
     inputNames.insert({bottom:Player2Name});
-    inputNames.inser({bottom:Player1Label});
-    inputNames.insert({bottom:Player1Name});
-    $$('body')[0].insert({bottom:inputNames});
+    inputNames.insert({bottom:submitNames.clone(true)});
+    gameDetails.insert({bottom:inputNames});
+    $$('body')[0].insert({bottom:gameDetails});
+    $$('body')[0].insert({bottom:PlayerHighlighter});
     
   }
 }
