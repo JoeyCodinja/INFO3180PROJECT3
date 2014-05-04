@@ -238,10 +238,12 @@ function gameStart(gameMode)
   {
     //Player names shown on the right hand side 
     //Highlighter for current player turn 
-    var PlayerHighlighter = new Element('div',{'id':'PlayerHighlighter'});
     $$('body')[0].insert({bottom:gameDetails});
-    $$('body')[0].insert({bottom:PlayerHighlighter});
- 
+    $$('body')[0].insert({bottom: new Element('div',{'id':'PlayerHighlighter'})});
+    $('gamearea').insert({before:new Element('div',{'id':'PlayerScoresContainer'})});
+    $('PlayerScoresContainer').insert({top:new Element('div',{'class':'PlayerScore'}), bottom:new Element('div',{'class':'PlayerScore'})});
+    $$('.PlayerScore')[0].innerHTML = player1.name + ": " + player1.score;
+    $$('.PlayerScore')[1].innerHTML = player2.name + ": " + player2.score;
   }
 }
 
@@ -599,8 +601,10 @@ function acceptName(names)/*Accepts and binds the name that has been
    $.jStorage.set('player2Name', player2.name);
    $('gameModeContainer').remove();
    $("PlayerHighlighter").insert({top:"Player1<br>"+ player1.name+"<br>"+"Turns:<br><span id='Player1Turns'>"+player1.turns+"</span>/24"});
-   $("PlayerHighlighter").insert({bottom:"<br>"});
+   $("PlayerHighlighter").insert({bottom:"<br><br>"});
    $("PlayerHighlighter").insert({bottom:"Player2<br>"+ player2.name+"<br>"+"Turns:<br><span id='Player2Turns'>"+player2.turns+"</span>/24" });
+   $$('.PlayerScore')[0].innerHTML = player1.name + ": <span class='PlayerScoreNum'>" + player1.score+"</span>";
+   $$('.PlayerScore')[1].innerHTML = player2.name + ": <span class='PlayerScoreNum'>" + player2.score+"</span>";
    return false;
  }
  else
@@ -676,11 +680,13 @@ function turnCounter()/*Counts the amount of turns the player has
       if(activePlayer == player1)
       {
         $('Player1Turns').innerHTML = activePlayer.turns
+        $$('.PlayerScoreNum')[0].innerHTML = activePlayer.score;
         activePlayer = player2;
       }
       else if (activePlayer == player2)
       {
         $('Player2Turns').innerHTML = activePlayer.turns;
+        $$('.PlayerScoreNum')[1].innerHTML = activePlayer.score;
         activePlayer = player1;
       }
       console.log(activePlayer.name+"'s turn");
@@ -712,10 +718,12 @@ function gameLogic() /*Contains the code that manages
             if (activePlayer == player1)
             {
               player2.score +=1;
+              $$('.PlayerScoreNum')[1].innerHTML = player2.score;
             }
             else if(activePlayer == player2)
             {
               player1.score +=1;
+              $$('.PlayerScoreNum')[0].innerHTML = player1.score;
             }
               
           }
