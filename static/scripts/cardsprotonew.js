@@ -619,6 +619,7 @@ function turnCounter()/*Counts the amount of turns the player has
                         already expired during their game and stops 
                         the game when the amount of turns eq*/
 {
+  var gameLogicResult;
   if (gameState.gamemode == GameState.GameMode.ONEPLAYER)
   {    
     if($$('.flipped').length==2)
@@ -631,7 +632,7 @@ function turnCounter()/*Counts the amount of turns the player has
         alert("Seems you have lost .. too bad :(");
       }
       console.log('Turns',player1.turns,'completed');
-      if(gameLogic()!=-1)
+      if(gameLogicResult!=-1)
       {
         flipCard($$('.flipped'));
       }
@@ -675,22 +676,27 @@ function turnCounter()/*Counts the amount of turns the player has
     }
     if($$('.flipped').length==2)
     {
+      gameLogicResult = gameLogic();
       activePlayer.updateTurn();
       console.log(activePlayer.name+' has completed '+activePlayer.turns+' turns');
-      if(activePlayer == player1)
+      if(activePlayer == player1 )
       {
         $('Player1Turns').innerHTML = activePlayer.turns
-        $$('.PlayerScoreNum')[0].innerHTML = activePlayer.score;
-        activePlayer = player2;
+        if(gameLogicResult ==2)
+        {return;}
+        else 
+        {activePlayer = player2;}
       }
       else if (activePlayer == player2)
       {
         $('Player2Turns').innerHTML = activePlayer.turns;
-        $$('.PlayerScoreNum')[1].innerHTML = activePlayer.score;
-        activePlayer = player1;
+        if(gameLogicResult == 2)
+        {return;}
+        else
+        {activePlayer=player1;} 
       }
       console.log(activePlayer.name+"'s turn");
-      if(gameLogic()!=-1)
+      if(gameLogicResult==-1)
       {
         flipCard($$('.flipped'));
       }
@@ -703,39 +709,42 @@ function gameLogic() /*Contains the code that manages
                        the matching logic of the game */
 {
   var c2bc = $$('.flipped');    //Cards to be checked(Same)
-  var cardsMatched = $$('flipped2');
   if(c2bc[1].childElements()[0].style.backgroundPosition == c2bc[0].childElements()[0].style.backgroundPosition)
+  {
+    c2bc[1].className += ' matched';
+    c2bc[1].className = c2bc[1].className.replace(' flipped',' flipped2'); // 'flipped2' is a marker to show that the card is flipped bu the card is matched
+    c2bc[0].className += ' matched';
+    c2bc[0].className = c2bc[0].className.replace(' flipped', ' flipped2');
+    if(gameState.gamemode == GameState.GameMode.ONEPLAYER)
     {
-      if(c2bc[1].className.indexOf('matched') == -1)
-        {
-          c2bc[1].className += ' matched';
-          if(gameState.gamemode == GameState.GameMode.ONEPLAYER)
-          {
-            player1.score  +=1;
-          }
-          else if(gameState.gamemode == GameState.GameMode.TWOPLAYER)
-          {
-            if (activePlayer == player1)
-            {
-              player2.score +=1;
-              $$('.PlayerScoreNum')[1].innerHTML = player2.score;
-            }
-            else if(activePlayer == player2)
-            {
-              player1.score +=1;
-              $$('.PlayerScoreNum')[0].innerHTML = player1.score;
-            }
-              
-          }
-          //trigger the Match sound here 
-          match_audio.load();
-          match_audio.play();
-          c2bc[1].className = c2bc[1].className.replace(' flipped',' flipped2'); // 'flipped2' is a marker to show that the card is flipped bu the card is matched 
-        }
-      if(c2bc[0].className.indexOf('matched') == -1)
-        {
-          c2bc[0].className += ' matched';
-          c2bc[0].className = c2bc[0].className.replace(' flipped', ' flipped2');
-        }
+      player1.score  +=1;
+      return 2 // Matched
     }
+    else if(gameState.gamemode == GameState.GameMode.TWOPLAYER)
+    {
+      if (activePlayer == player1)
+      {
+        activePlayer.score +=1;
+        $$('.PlayerScoreNum')[0].innerHTML = activePlayer.score;
+        return 2; // matched 
+      }
+      else if(activePlayer == player2)
+      {
+        activePlayer.score +=1;
+        $$('.PlayerScoreNum')[1].innerHTML = activePlayer.score;
+        return 2; // matched 
+      }
+    }
+    //trigger the Match sound here 
+    match_audio.load();
+    match_audio.play();
+  }
+  else
+  {
+    /*if(activePlayer ==player1)
+    {activePlayer =player2;}
+    else if (activePlayer == player2)
+    {activePlayer=player1;}*/
+    return -1 //No match
+  }
 }
